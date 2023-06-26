@@ -1,0 +1,10 @@
+services:
+  docker-rs-distroless:
+    build:
+      context: .
+    image: rs-distroless
+    container_name: rs-server
+    hostname: rs-server
+    deploy:
+      restart_policy:
+        condition: on-failure

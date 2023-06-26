@@ -1,0 +1,35 @@
+name: CI  
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    name: Docker/Rust Tests
+    runs-on: ubuntu-latest
+
+    services:
+      dind:
+        image: docker:23.0-rc-dind-rootless
+        ports:
+          - 2375:2375
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Run Cargo check/test
+        run: |
+          cargo -vv check
+          cargo -vv test
+
+      - name: Build and spin-up the Docker container
+        uses: isbang/compose-action@v1.4.1
+        with:
+          up-flags: "--build"
